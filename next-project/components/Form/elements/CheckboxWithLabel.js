@@ -8,7 +8,7 @@ export const CheckboxWithLabel = forwardRef((props, ref) => {
       <div>
         <Checkbox inputRef={ref} {...props}/>
         <label htmlFor={props.id}>{props.label}</label>
-        <Typography variant="subtitle1" component="div" color="error" >{props.helperText}</Typography>
+        <Typography variant="subtitle1" component="div" color="error" >{props.helpertext}</Typography>
       </div>
     )
 });

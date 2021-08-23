@@ -8,8 +8,6 @@ import { InputPhone } from './elements/InputPhone';
 import { InputMultiline } from './elements/InputMultiline';
 import { SubmitButton } from './elements/SubmitButton';
 import { CheckboxWithLabel } from './elements/CheckboxWithLabel';
-import Checkbox from "@material-ui/core/Checkbox";
-import { Typography } from '@material-ui/core';
 
 yup.addMethod(yup.string, 'checkMessage', function (errorMessage) {
     return this.test(`message`, errorMessage, function (value) {
@@ -46,14 +44,14 @@ const ContactForm = () => {
         <div>
             <h2>Contact</h2>
             <Form onSubmit={handleSubmit(onSubmit, onError)}>
-                <Input name="firstName" type="text" label="First Name" {...register("firstName", { required: "Required"})} required error={!! errors.firstName} helperText={errors?.firstName?.message}></Input>
-                <Input name="lastName" type="text" label="Last Name" {...register("lastName", { required: "Required"})} required error={!! errors.lastName} helperText={errors?.lastName?.message}></Input>
-                <Input name="email" type="text" label="Email" {...register("email", { required: "Required"})} required error={!! errors.email} helperText={errors?.email?.message}></Input>
-                <InputPhone name="phone" type="text" label="Phone" {...register("phone", { required: "Required"})} required error={!! errors.phone} helperText={errors?.phone?.message}></InputPhone>
-                <Input name="subject" type="text" label="Subject" {...register("subject", { required: "Required"})} required error={!! errors.subject} helperText={errors?.subject?.message}></Input>
-                <InputMultiline name="message" type="text" label="Message" {...register("message", { required: "Required"})} required error={!! errors.message} helperText={errors?.message?.message}></InputMultiline>
-                <CheckboxWithLabel name="acceptTerms" type="checkbox" {...register('acceptTerms')} id="acceptTerms" color="primary" label="Terms and Conditions" helperText={errors?.acceptTerms?.message} ></CheckboxWithLabel>
-                <CheckboxWithLabel name="privacy" type="checkbox" {...register('privacy')} id="privacy" color="primary" label="Privacy Policy" helperText={errors?.privacy?.message} ></CheckboxWithLabel>
+                <Input name="firstName" type="text" label="First Name" {...register("firstName", { required: "Required"})} required error={!! errors.firstName} helpertext={errors?.firstName?.message}></Input>
+                <Input name="lastName" type="text" label="Last Name" {...register("lastName", { required: "Required"})} required error={!! errors.lastName} helpertext={errors?.lastName?.message}></Input>
+                <Input name="email" type="text" label="Email" {...register("email", { required: "Required"})} required error={!! errors.email} helpertext={errors?.email?.message}></Input>
+                <InputPhone name="phone" type="text" label="Phone" {...register("phone", { required: "Required"})} required error={!! errors.phone} helpertext={errors?.phone?.message}></InputPhone>
+                <Input name="subject" type="text" label="Subject" {...register("subject", { required: "Required"})} required error={!! errors.subject} helpertext={errors?.subject?.message}></Input>
+                <InputMultiline name="message" type="text" label="Message" {...register("message", { required: "Required"})} required error={!! errors.message} helpertext={errors?.message?.message}></InputMultiline>
+                <CheckboxWithLabel name="acceptTerms" type="checkbox" {...register('acceptTerms')} id="acceptTerms" color="primary" label="Terms and Conditions" helpertext={errors?.acceptTerms?.message} ></CheckboxWithLabel>
+                <CheckboxWithLabel name="privacy" type="checkbox" {...register('privacy')} id="privacy" color="primary" label="Privacy Policy" helpertext={errors?.privacy?.message} ></CheckboxWithLabel>
                 <SubmitButton>Send</SubmitButton>
             </Form>
         </div>
