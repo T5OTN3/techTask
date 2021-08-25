@@ -1,4 +1,5 @@
 import React, {useState, useContext} from 'react';
+import { useRouter } from 'next/router'
 import axios from 'axios';
 import { server } from './../config'
 import dynamic from 'next/dynamic';
@@ -7,20 +8,31 @@ import 'react-quill/dist/quill.snow.css';
 import AuthContext from '../store/auth-context';
 import Alert from '@material-ui/lab/Alert';
 import Collapse from '@material-ui/core/Collapse';
+import { SubmitButton } from '../components/Form/elements/SubmitButton';
 
 
 const create = () => {
+    const router = useRouter()
     const authCtx = useContext(AuthContext);
     const [value, setValue] = useState('');
     const [open, setOpen] = useState(true);
+    const [openAlert, setOpenAlert] = useState(false);
+    const [alertStatus, setAlertStatus] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
 
     const onEditorChange = (html) => {
         setValue(html);
     }
 
     const onSubmit = async () => {
-        const { data: newBlog } = await axios.post(`${server}/api/admin/blog`, { content: value, user: 'admin' });
-        console.log(newBlog);
+        const { data: newBlog } = await axios.post(`${server}/api/admin/blog`, { content: value, author: 'Admin' });
+        setOpenAlert(true);
+        setAlertStatus(newBlog.data.severity);
+        setAlertMessage(newBlog.data.message);
+        newBlog.data.severity === 'success' &&
+        setTimeout(() => {
+            router.push('/');
+        }, 2000);
     }
 
     const modules = {
@@ -68,6 +80,11 @@ const create = () => {
                 </Collapse>
               )
             }
+            {openAlert && (
+                <Collapse in={openAlert} timeout='auto'>
+                    <Alert severity={alertStatus} onClose={() => {setOpenAlert(false);}}>{alertMessage}</Alert>
+                </Collapse>
+            )}
             {authCtx.isLoggedIn && (
             <div>
               <div>
@@ -79,7 +96,7 @@ const create = () => {
                       onChange={onEditorChange}
                   /> 
               </div>
-              <button style={{ marginTop: '50px' }} onClick={onSubmit} >Post</button> 
+              <SubmitButton onClick={onSubmit}>Send</SubmitButton>
             </div>
             )}
               

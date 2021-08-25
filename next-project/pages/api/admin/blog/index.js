@@ -6,8 +6,8 @@ function handler(req, res) {
         case 'GET':
             return getBlogs();
         case 'POST':
-            const { content, user } = req.body;
-            return createBlog(content, user);
+            const { content, author } = req.body;
+            return createBlog(content, author);
         default:
             return res.status(405).end(`Method ${req.method} Not Allowed`)
     }
@@ -20,18 +20,28 @@ function handler(req, res) {
         });
     }
     
-    function createBlog(content, user) {
+    async function createBlog(content, author) {
         try {
-/*             const newBlog = await prisma.blogs.create({
-                data: {
-                    content,
-                    user
-                }
-              }) */
+            const status = content.match(/<img.*>/g);
+            const data = {};
             
+            if(status){
+                data.severity = 'error';
+                data.message = 'Sorry, this editor does not support image file';
+            }else{
+                data.severity = 'success';
+                data.message = 'Your post is created';
+                const newBlog = await prisma.blogs.create({
+                    data: {
+                        content,
+                        author
+                    }
+                });
+            }
+
             return res.status(200).json({
                 status: 'success',
-                data: content
+                data
             });
         } catch (error) {
             return res.status(400).json({ message: error });
