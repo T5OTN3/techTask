@@ -1,23 +1,39 @@
-import axios from "axios";
+import prisma from './../../../../lib/prisma'
 
 export default async function handler(req, res){
-    const { phone } = req.query;
-    const code = 244556;
+    if (req.method === 'GET') {
+        // Process a POST request
+        const { phone } = req.query;
         
-    //const smsRespone = await axios(`https://api.budgetsms.net/sendsms/?username=meta&handle=4afdd7e78440a1b6fdd326d1144538a7&userid=9117&msg=${code}&from=BudgetSMS&to=995${phone}`);
-    //console.log(smsRespone.data);
+        const code = Math.random().toString().substr(2, 6);
 
-    //todo if phone exist in DB and status is not verify
-    if(phone){
+        const smsRespone = await axios(`https://api.budgetsms.net/sendsms/?username=meta&handle=4afdd7e78440a1b6fdd326d1144538a7&userid=9117&msg=${code}&from=BudgetSMS&to=995${phone}`);
+        
+        await prisma.contact.update({
+            where: { phone },
+            data: {
+                smsCode: code,
+                smsStatus: smsRespone.data
+            }
+        })
+
+        console.log(smsRespone.data);
+        const smsStatus = smsRespone?.data?.message.include('OK');
+
+        smsStatus ?
         res.status(200).json({
-            phone,
-            code: '12344'
+            status: 'success',
+            message: 'Your code was succesfully sent'
+        }) 
+        :
+        res.status(200).json({
+            status: 'success',
+            message: `${phone} is not found try again`
         }); 
+        return
     }else{
-        res.status(404).json({
-            message: `${phone} is not found or already verified`
-        }); 
+        // Handle any other HTTP method
+        res.status(400).send({ message: 'Only GET requests allowed'});
+        return
     }
-
-
 }

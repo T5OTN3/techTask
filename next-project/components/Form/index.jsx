@@ -1,5 +1,7 @@
 import axios from 'axios';
+import { server } from './../../config'
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/router'
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import {Form} from './elements/Form';
@@ -30,14 +32,24 @@ const schema = yup.object().shape({
 });
 
 const ContactForm = () => {
+    const router = useRouter()
     const { register, handleSubmit, formState: { errors } } = useForm({
         mode: "all",
         resolver: yupResolver(schema)
     });
 
     const onSubmit = async (data) => {
-        console.log('submit');
+        const { data: findPhone } = await axios.post(`${server}/api/verification/findPhone`, { phone: data.phone });
+        console.log(findPhone);
+        const res = await axios.post(`${server}/api/admin/contact`, data);
+        !findPhone?.smsConfirmed ? 
+        router.push(`/contact/${data.phone}`) 
+        :
+        router.push(`/`);
+
+        console.log(res.data);
     }
+
     const onError = (errors, e) => console.log(errors, e);
 
     return (

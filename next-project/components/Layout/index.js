@@ -5,7 +5,7 @@ import Header from '../../widgets/pageHeader';
 export default function Layout({ children }) {
 
   return (
-    <Grid container direction='column'>
+      <Grid container direction='column'>
       <Grid item>
         <Header/>
       </Grid>
