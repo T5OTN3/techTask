@@ -1,4 +1,6 @@
 import React, {useState, useContext} from 'react';
+import axios from 'axios';
+import { server } from './../config'
 import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
@@ -16,8 +18,9 @@ const create = () => {
         setValue(html);
     }
 
-    const onSubmit = () => {
-        console.log(value);
+    const onSubmit = async () => {
+        const { data: newBlog } = await axios.post(`${server}/api/admin/blog`, { content: value, user: 'admin' });
+        console.log(newBlog);
     }
 
     const modules = {
