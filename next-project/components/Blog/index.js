@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function BlogCard({id, title, body}) {
+export default function BlogCard({id, author, content, date }) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
 
@@ -53,20 +53,15 @@ export default function BlogCard({id, title, body}) {
             {id}
           </Avatar>
         }
-        title="Shrimp and Chorizo Paella"
-        subheader="September 14, 2016"
-      />
-      <CardMedia
-        className={classes.media}
-        image={`https://picsum.photos/200/30${id}`}
-        title={title}
+        author="Admin"
+        subheader={new Date(date).toDateString()}
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="h2">
-         {title}
+         {author}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
-            {body}
+          <div dangerouslySetInnerHTML={{ __html: content }}></div> 
         </Typography>
       </CardContent>
       <CardActions>

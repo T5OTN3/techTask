@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Content from '../widgets/content';
 import axios from 'axios';
+import { server } from './../config'
 
 
 export default function Home({ blogs }) {
@@ -10,17 +11,17 @@ export default function Home({ blogs }) {
       <Head>
         <title>Main</title>
       </Head>
-      <Content blogs={blogs}/>
+      <Content blogs={blogs.data}/>
     </div>
   )
 }
 
 export const getStaticProps = async () => {
-  const res = await axios('https://jsonplaceholder.typicode.com/posts?_limit=6');
+  const { data } = await axios(`${server}/api/admin/blog`);
 
   return {
     props: {
-      blogs: res.data
+      blogs: data
     }
   }
 }

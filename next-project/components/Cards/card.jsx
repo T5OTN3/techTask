@@ -18,45 +18,41 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const limitTitle = (title, limit = 17) => {
-  const newTitle = [];
-  if (title.length > limit) {
-      title.split(' ').reduce((acc, cur) => {
-          if (acc + cur.length <= limit) {
-              newTitle.push(cur);
-          }
-          return acc + cur.length;
-      }, 0);
+const limitText = (text, limit = 300) => {
+  const newtext = [];
+  if(text.length > limit){
+      text.split(' ').reduce((acc, cur) => {
+         if((acc + cur.length) <= limit){
+           newtext.push(cur);  
+         }
+         return acc + cur.length;
+      }, 0)
 
-      return `${newTitle.join(' ')}...`;
+      return `${newtext.join(' ')}...`
   }
-  return title;
+
+  return text;
 }
 
-export default function MediaCard({ id, title, body }) {
+export default function MediaCard({ id, author, content }) {
   const classes = useStyles();
 
   return (
     <Card className={classes.root}>
       <CardActionArea>
-        <CardMedia
-          className={classes.media}
-          image={`https://picsum.photos/200/30${id}`}
-          title={title}
-        />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
-            {limitTitle(title)}
+            {author}
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
-            {body}
+            <div dangerouslySetInnerHTML={{ __html: limitText(content) }}></div> 
           </Typography>
         </CardContent>
       </CardActionArea>
       <CardActions>
         <Link href="/blogs/[id]" as={`/blogs/${id}`}>
           <Button size="small" color="primary">
-            Learn More
+            Show More
           </Button>
         </Link>
       </CardActions>

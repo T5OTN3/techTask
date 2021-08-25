@@ -9,7 +9,7 @@ const Cards = ({ data }) => {
             {
                 data.map((el, index) => (
                     <Grid key={index} item md={4} sm={6} xs={12}>
-                        <MediaCard id={el.id} title={el.title} body={el.body}/>
+                        <MediaCard id={el.id} author={el.author} content={el.content}/>
                     </Grid>
                 ))
             }

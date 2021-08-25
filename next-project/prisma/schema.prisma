@@ -35,7 +35,7 @@ model Contact {
 model Blogs{
   @@map(name: "blog")
   id Int @id @default(autoincrement())
-  content String
+  content String @db.Text
   author String @db.VarChar(255)
   createDate  DateTime? @default(now())
 }
