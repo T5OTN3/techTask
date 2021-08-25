@@ -4,9 +4,9 @@ export default async function handler(req, res){
     if (req.method === 'POST') {
         // Process a POST request
         const { phone } = req.body;
-        let smsConfirmed = false
-
-        console.log(phone);
+        const obj = {
+            smsConfirmed: false,
+        }
 
         const phoneStatus = await prisma.contact.count({
             where: {
@@ -14,22 +14,23 @@ export default async function handler(req, res){
             }
         });
 
-        console.log(phoneStatus);
-
-        if(phoneStatus){
-            smsConfirmed = await prisma.contact.findUnique({
+        if(phoneStatus !== 0){
+            const result = await prisma.contact.findFirst({
                 select:{
-                    smsConfirmed: true
+                    smsConfirmed: true,
+                    id: true
                 },
                 where: { 
                     phone: phone
                 }
             });
+            obj.smsConfirmed = result.smsConfirmed;
+            obj.id = result.id;
         }
 
         res.status(200).json({
             status: 'success',
-            smsConfirmed
+            data: obj
         }); 
         return
     }else{

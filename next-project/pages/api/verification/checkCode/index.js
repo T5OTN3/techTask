@@ -3,8 +3,8 @@ import prisma from './../../../../lib/prisma'
 export default async function handler(req, res){
     if (req.method === 'POST') {
         // Process a POST request
-        const { phone } = req.body;
-        let smsConfirmed = false
+        const { phone, smsCode, id } = req.body;
+        let info = ''
 
         const phoneStatus = await prisma.contact.count({
             where: {
@@ -13,19 +13,21 @@ export default async function handler(req, res){
         });
 
         if(phoneStatus){
-            smsConfirmed = await prisma.contact.findUnique({
+            const response = await prisma.contact.findUnique({
                 select:{
-                    smsConfirmed: true
+                    smsCode: true
                 },
                 where: {
-                    phone: phone
+                    id: +id
                 }
             });
+            
+            response.code === +code ? info = 'valid' : info = 'invalid'
         }
 
         res.status(200).json({
             status: 'success',
-            smsConfirmed
+            info
         }); 
         return
     }else{

@@ -7,12 +7,14 @@ export default async function handler(req, res){
         
         const newContact = await prisma.contact.create({
             data: {
-                first_name: firstName,
-                last_name: lastName,
+                firstName: firstName,
+                lastName: lastName,
                 email,
                 phone,
                 subject,
-                message         
+                message,
+                privacy,
+                acceptTerms        
             }
         })
 

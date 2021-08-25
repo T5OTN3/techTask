@@ -6,7 +6,7 @@ import Head from 'next/head';
 import { VerifyInput } from '../../../components/Form/elements/VerifyInput';
 import { Button, Typography } from '@material-ui/core';
 
-const verifyPhone = ({ state }) => {
+const verifyPhone = ({ state, userInfo }) => {
     const router = useRouter();
     const { phone } = router.query;
     const [code, setCode] = useState('');
@@ -21,8 +21,10 @@ const verifyPhone = ({ state }) => {
         setCode(value);
     }
 
-    const sendCode = () => {
-        console.log(code.replace(/[-_]/g,''));
+    const sendCode = async () => {
+        const smsCode = code.replace(/[-_]/g,'');
+        console.log(smsCode);
+        const res = await axios.post(`${server}/api/checkCode`, {phone: userInfo?.data?.phone, smsCode, id: userInfo?.data?.id});
     }
 
     const resendCode = async () => {
@@ -36,7 +38,7 @@ const verifyPhone = ({ state }) => {
                 <title>Verification</title>
             </Head>
             <Typography variant="h3" gutterBottom>Verification phone</Typography>
-            <Typography variant="subtitle1" gutterBottom>Please enter the verification code</Typography>
+            <Typography variant="subtitle1" gutterBottom>{userInfo?.data?.firstName} please enter the verification code</Typography>
             <Typography variant="subtitle1" gutterBottom>we sent to your phone number</Typography>
             <VerifyInput value={code} onChange={(e) => onChange(e)}></VerifyInput>
             <Button onClick={resendCode} color="secondary">Resend code ?</Button>
@@ -46,11 +48,12 @@ const verifyPhone = ({ state }) => {
 }
 
 export const getServerSideProps =  async (context) => {
-    const res =  await axios(`${server}/api/verification/sms/${context.params.phone}`);
+   const res = await axios.post(`${server}/api/verification/sms`, {phone: context.query.phone, id: context.query.id});
     
     return {
         props: {
-            state: true
+            state: true,
+            userInfo: res.data
         }
     }
 }

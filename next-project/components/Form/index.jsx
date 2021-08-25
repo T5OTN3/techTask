@@ -40,14 +40,11 @@ const ContactForm = () => {
 
     const onSubmit = async (data) => {
         const { data: findPhone } = await axios.post(`${server}/api/verification/findPhone`, { phone: data.phone });
-        console.log(findPhone);
-        const res = await axios.post(`${server}/api/admin/contact`, data);
-        !findPhone?.smsConfirmed ? 
-        router.push(`/contact/${data.phone}`) 
+        const {data: newContact} = await axios.post(`${server}/api/admin/contact`, data);
+        !findPhone.data?.smsConfirmed ? 
+        router.push(`/contact/${data.phone}?id=${newContact?.data?.id}`) 
         :
         router.push(`/`);
-
-        console.log(res.data);
     }
 
     const onError = (errors, e) => console.log(errors, e);

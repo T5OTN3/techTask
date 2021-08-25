@@ -24,10 +24,18 @@ model Contact {
   phone        String   @db.VarChar(255)
   subject      String   @db.VarChar(255)
   message      String   @db.VarChar(255)
-  privacy      Boolean?
-  acceptTerms  Boolean?
+  privacy      Boolean? @default(false)
+  acceptTerms  Boolean? @default(false)
   contactDate  DateTime? @default(now())
   smsCode      Int?
-  smsConfirmed Boolean?
+  smsConfirmed Boolean? @default(false)
   smsStatus    String?   @db.VarChar(255)
+}
+
+model Blogs{
+  @@map(name: "blog")
+  id Int @id @default(autoincrement())
+  content String
+  author String @db.VarChar(255)
+  createDate  DateTime? @default(now())
 }
