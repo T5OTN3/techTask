@@ -21,8 +21,8 @@ export default async function handler(req, res){
                     id: +id
                 }
             });
-            
-            response.code === +code ? info = 'valid' : info = 'invalid'
+
+            response.smsCode === +smsCode ? info = 'valid' : info = 'invalid'
         }
 
         res.status(200).json({

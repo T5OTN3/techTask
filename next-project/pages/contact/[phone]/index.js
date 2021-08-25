@@ -5,6 +5,8 @@ import axios from 'axios';
 import Head from 'next/head';
 import { VerifyInput } from '../../../components/Form/elements/VerifyInput';
 import { Button, Typography } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
+import Collapse from '@material-ui/core/Collapse';
 
 const verifyPhone = ({ state, userInfo }) => {
     const router = useRouter();
@@ -12,6 +14,8 @@ const verifyPhone = ({ state, userInfo }) => {
     const [code, setCode] = useState('');
     const [done, setDone] = useState();
     const [apiError, setApiError] = useState('');
+    const [openErrorAlert, setOpenErrorAlert] = useState(false);
+    const [openSuccesAlert, setOpenSuccesAlert] = useState(false);
 
 
     const onChange = (event) => {
@@ -23,8 +27,18 @@ const verifyPhone = ({ state, userInfo }) => {
 
     const sendCode = async () => {
         const smsCode = code.replace(/[-_]/g,'');
-        console.log(smsCode);
-        const res = await axios.post(`${server}/api/checkCode`, {phone: userInfo?.data?.phone, smsCode, id: userInfo?.data?.id});
+        const res = await axios.post(`${server}/api/verification/checkCode`, {phone: userInfo?.data?.phone, smsCode, id: userInfo?.data?.id});
+        if(res.data.info === 'valid'){
+            setOpenSuccesAlert(true);
+            setTimeout(() => {
+                router.push('/create');
+            }, 1000)
+        }else{
+            setOpenErrorAlert(true)
+            setTimeout(() => {
+                setOpenErrorAlert(false)
+            }, 4000)
+        }
     }
 
     const resendCode = async () => {
@@ -43,12 +57,27 @@ const verifyPhone = ({ state, userInfo }) => {
             <VerifyInput value={code} onChange={(e) => onChange(e)}></VerifyInput>
             <Button onClick={resendCode} color="secondary">Resend code ?</Button>
             <Button onClick={sendCode} color="primary" disabled={!done}>Done</Button>
+            {state && (
+                <Collapse in={true} timeout='auto'>
+                    <Alert severity="info">{userInfo?.message}</Alert>
+                </Collapse>
+            )}
+            {openErrorAlert && (
+                <Collapse in={openErrorAlert} timeout='auto'>
+                    <Alert severity="error" onClose={() => {setOpenErrorAlert(false);}}>Invalid Code. Try again</Alert>
+                </Collapse>
+            )}
+            {openSuccesAlert && (
+                <Collapse in={openSuccesAlert} timeout='auto'>
+                    <Alert severity="success" onClose={() => {setOpenSuccesAlert(false);}}>You have verified your phone</Alert>
+                </Collapse>
+            )}
         </div>
     )
 }
 
 export const getServerSideProps =  async (context) => {
-   const res = await axios.post(`${server}/api/verification/sms`, {phone: context.query.phone, id: context.query.id});
+   const res = await axios.post(`${server}/api/verification/sendSMS`, {phone: context.query.phone, id: context.query.id});
     
     return {
         props: {
