@@ -24,12 +24,13 @@ export default async function handler(req, res){
 
             if(response?.smsCode === +smsCode){
                 info = 'valid';
-                await prisma.contact.update({
+                const result = await prisma.contact.update({
                     where: { id: +id },
                     data: {
                         smsConfirmed: true,
                     }
-                })
+                });
+
             }else{
                 info = 'invalid'
             }
