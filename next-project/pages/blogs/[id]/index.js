@@ -6,7 +6,6 @@ import BlogCard from '../../../components/Blog';
 
 const blog = ({ blog }) => {
     const router = useRouter();
-    console.log(router);
     const { id } = router.query;
 
     return(

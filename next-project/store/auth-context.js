@@ -15,7 +15,6 @@ export const AuthContextProvider = (props) => {
 
     useEffect(() => {
         token ? setIsLogin(true) : setIsLogin(false)
-        console.log('useEffect')
     },[token]);
 
     const loginHandler = () => {

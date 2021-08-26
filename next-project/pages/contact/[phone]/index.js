@@ -43,7 +43,6 @@ const verifyPhone = ({ state, userInfo }) => {
 
     const resendCode = async () => {
         const res =  await axios(`${server}/api/verification/sms/${phone}`);
-        console.log(res.data);
     }
     
     return(

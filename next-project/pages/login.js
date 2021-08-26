@@ -43,8 +43,6 @@ const login = () => {
                 authCtx.logout();
                 setAuthError(res.data.message)
             }
-
-            console.log(res);
         } catch (error) {
             setOpenErrorAlert(true)
             setTimeout(() => {

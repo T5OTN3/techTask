@@ -5,7 +5,7 @@ export default async function handler(req, res){
     if (req.method === 'POST') {
         // Process a POST request
         const { phone, id } = req.body;
-        console.log(phone, id);
+
         const code = Math.random().toString().substr(2, 6);
 
         const smsRespone = await axios(`https://api.budgetsms.net/sendsms/?username=meta&handle=4afdd7e78440a1b6fdd326d1144538a7&userid=9117&msg=${code}&from=BudgetSMS&to=995${phone}`);
@@ -19,7 +19,6 @@ export default async function handler(req, res){
             }
         })
 
-        console.log(smsRespone.data);
         const smsStatus = smsRespone?.data?.includes('OK');
 
         smsStatus ?
