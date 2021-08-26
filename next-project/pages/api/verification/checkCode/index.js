@@ -22,7 +22,17 @@ export default async function handler(req, res){
                 }
             });
 
-            response.smsCode === +smsCode ? info = 'valid' : info = 'invalid'
+            if(response?.smsCode === +smsCode){
+                info = 'valid';
+                await prisma.contact.update({
+                    where: { id: +id },
+                    data: {
+                        smsConfirmed: true,
+                    }
+                })
+            }else{
+                info = 'invalid'
+            }
         }
 
         res.status(200).json({
