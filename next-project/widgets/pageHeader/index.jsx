@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
     root:{
         marginBottom: "10px"
     },
-    typographyStyles: {
+    typoStyles: {
         flex: 1,
         cursor: "pointer"
     }
@@ -21,7 +21,7 @@ const Header = () => {
     return(
         <AppBar position="static" className={classes.root} color="inherit">
         <Toolbar>
-            <Typography className={classes.typographyStyles} variant="h6">
+            <Typography className={classes.typoStyles} variant="h6">
                 <Link href="/"><Button color="inherit">Blogs</Button></Link>
                 {authCtx.isLoggedIn && (<Link href='/create'><Button color="inherit">create</Button></Link> )}
                 <Link href='/contact'><Button color="inherit">Contact</Button></Link>

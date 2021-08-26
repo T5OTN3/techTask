@@ -60,7 +60,7 @@ export default function BlogCard({id, author, content, date }) {
         <Typography gutterBottom variant="h5" component="h2">
          {author}
         </Typography>
-        <Typography variant="body2" color="textSecondary" component="p">
+        <Typography variant="body2" color="textSecondary" component="div">
           <div dangerouslySetInnerHTML={{ __html: content }}></div> 
         </Typography>
       </CardContent>

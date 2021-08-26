@@ -44,7 +44,7 @@ export default function MediaCard({ id, author, content }) {
           <Typography gutterBottom variant="h5" component="h2">
             {author}
           </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography variant="body2" color="textSecondary" component="div">
             <div dangerouslySetInnerHTML={{ __html: limitText(content) }}></div> 
           </Typography>
         </CardContent>
