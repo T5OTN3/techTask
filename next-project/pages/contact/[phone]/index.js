@@ -1,6 +1,6 @@
 import { server } from './../../../config'
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Head from 'next/head';
 import { VerifyInput } from './../../../components/Form/elements/VerifyInput';
@@ -13,10 +13,14 @@ const verifyPhone = ({ state, userInfo }) => {
     const { phone } = router.query;
     const [code, setCode] = useState('');
     const [done, setDone] = useState();
-    const [apiError, setApiError] = useState('');
+    const [smsApiStatus, setSmsApiStatus] = useState('');
+    const [smsApiBool, setSmsApiBool] = useState(true);
     const [openErrorAlert, setOpenErrorAlert] = useState(false);
     const [openSuccesAlert, setOpenSuccesAlert] = useState(false);
 
+    useEffect(() => {
+        setSmsApiStatus(userInfo?.message);
+    });
 
     const onChange = (event) => {
         const { value } = event.target;
@@ -26,6 +30,7 @@ const verifyPhone = ({ state, userInfo }) => {
     }
 
     const sendCode = async () => {
+        setSmsApiBool(false);
         const smsCode = code.replace(/[-_]/g,'');
         const res = await axios.post(`${server}/api/verification/checkCode`, {phone: userInfo?.data?.phone, smsCode, id: userInfo?.data?.id});
         if(res.data.info === 'valid'){
@@ -42,7 +47,9 @@ const verifyPhone = ({ state, userInfo }) => {
     }
 
     const resendCode = async () => {
-        const res =  await axios(`${server}/api/verification/sms/${phone}`);
+        const res =  axios.post(`${server}/api/verification/sendSMS`, {phone: userInfo?.data?.phone, id: userInfo?.data?.id});
+        setSmsApiBool(true);
+        setSmsApiStatus(userInfo?.message);
     }
     
     return(
@@ -57,10 +64,11 @@ const verifyPhone = ({ state, userInfo }) => {
             <Button onClick={resendCode} color="secondary">Resend code ?</Button>
             <Button onClick={sendCode} color="primary" disabled={!done}>Done</Button>
             {state && (
-                <Collapse in={true} timeout='auto'>
-                    <Alert severity="info">{userInfo?.message}</Alert>
+                <Collapse in={smsApiBool} timeout='auto'>
+                    <Alert severity="info">{smsApiStatus}</Alert>
                 </Collapse>
             )}
+            <br/>
             {openErrorAlert && (
                 <Collapse in={openErrorAlert} timeout='auto'>
                     <Alert severity="error" onClose={() => {setOpenErrorAlert(false);}}>Invalid Code. Try again</Alert>
