@@ -5,16 +5,23 @@ export default async function handler(req, res){
         // Process a POST request
         const { phone } = req.body;
         const obj = {
-            smsConfirmed: false,
+            smsConfirmed: true,
         }
 
         const phoneStatus = await prisma.contact.count({
             where: {
-                phone
+                AND: {
+                    phone: {
+                        equals: phone,
+                    },
+                    smsConfirmed: {
+                        equals: true,
+                    }
+                }
             }
         });
 
-        if(phoneStatus !== 0){
+        if(phoneStatus === 0){
             const result = await prisma.contact.findFirst({
                 select:{
                     smsConfirmed: true,
