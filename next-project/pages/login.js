@@ -11,6 +11,7 @@ import { SubmitButton } from './../components//Form/elements/SubmitButton';
 import AuthContext from './../store/auth-context';
 import Alert from '@material-ui/lab/Alert';
 import Collapse from '@material-ui/core/Collapse';
+import { Grid } from '@material-ui/core';
 
 const schema = yup.object().shape({
     email: yup.string().matches(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,"Email Incorect").required("Email is a required field"),
@@ -56,23 +57,28 @@ const login = () => {
 
     return(
         <div>
-           <h1>Login</h1> 
-           <Form onSubmit={handleSubmit(onSubmit, onError)}>
-                <Input name="email" type="text" label="Email" {...register("email", { required: "Required"})} required error={!! errors.email} helpertext={errors?.email?.message}></Input>
-                <Input name="password" type="text" label="Password" {...register("password", { required: "Required"})} required error={!! errors.password} helpertext={errors?.password?.message}></Input>
-                <SubmitButton>Send</SubmitButton>
-            </Form>
-            {authError && (
-                <Collapse in={openErrorAlert} timeout='auto'>
-                    <Alert severity="error" onClose={() => {setOpenErrorAlert(false);}}>{authError}</Alert>
-                </Collapse>
-            )}
-            {openSuccesAlert && (
-                <Collapse in={openSuccesAlert} timeout='auto'>
-                    <Alert severity="success" onClose={() => {setOpenSuccesAlert(false);}}>Login successful</Alert>
-                </Collapse>
-            )
-            }
+            <Grid item container>
+                <Grid item xs={false} sm={2} md={3}/>
+                    <Grid item xs={12} sm={8} md={6}>
+                    <h1>Login</h1> 
+                    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+                            <Input name="email" type="text" label="Email" {...register("email", { required: "Required"})} required error={!! errors.email} helpertext={errors?.email?.message}></Input>
+                            <Input name="password" type="text" label="Password" {...register("password", { required: "Required"})} required error={!! errors.password} helpertext={errors?.password?.message}></Input>
+                            <SubmitButton>Send</SubmitButton>
+                        </Form>
+                        {authError && (
+                            <Collapse in={openErrorAlert} timeout='auto'>
+                                <Alert severity="error" onClose={() => {setOpenErrorAlert(false);}}>{authError}</Alert>
+                            </Collapse>
+                        )}
+                        {openSuccesAlert && (
+                            <Collapse in={openSuccesAlert} timeout='auto'>
+                                <Alert severity="success" onClose={() => {setOpenSuccesAlert(false);}}>Login successful</Alert>
+                            </Collapse>
+                        )}
+                    </Grid>
+                <Grid item xs={false} sm={2} md={3}/>
+            </Grid>
         </div>
         
     )
