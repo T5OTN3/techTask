@@ -1,1 +1,0 @@
-sh -c 'cd ./next-project/ && npm run start 3000'
