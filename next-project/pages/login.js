@@ -8,7 +8,7 @@ import * as yup from 'yup';
 import { Form } from './../components//Form/elements/Form';
 import { Input } from './../components//Form/elements/Input';
 import { SubmitButton } from './../components//Form/elements/SubmitButton';
-import AuthContext from '../store/auth-context';
+import AuthContext from './../store/auth-context';
 import Alert from '@material-ui/lab/Alert';
 import Collapse from '@material-ui/core/Collapse';
 

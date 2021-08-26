@@ -1,5 +1,5 @@
 import { Grid } from '@material-ui/core';
-import Header from '../../widgets/pageHeader';
+import Header from './../../widgets/pageHeader';
 
 
 export default function Layout({ children }) {

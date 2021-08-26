@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import Link from 'next/link'
 import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import AuthContext from '../../store/auth-context';
+import AuthContext from './../../store/auth-context';
 
 const useStyles = makeStyles((theme) => ({
     root:{

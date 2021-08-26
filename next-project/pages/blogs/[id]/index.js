@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import { server } from '../../../config'
+import { server } from './../../../config'
 import Head from 'next/head';
-import BlogCard from '../../../components/Blog';
+import BlogCard from './../../../components/Blog';
 
 const blog = ({ blog }) => {
     const router = useRouter();

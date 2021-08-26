@@ -5,10 +5,10 @@ import { server } from './../config'
 import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
-import AuthContext from '../store/auth-context';
+import AuthContext from './../store/auth-context';
 import Alert from '@material-ui/lab/Alert';
 import Collapse from '@material-ui/core/Collapse';
-import { SubmitButton } from '../components/Form/elements/SubmitButton';
+import { SubmitButton } from './../components/Form/elements/SubmitButton';
 
 
 const create = () => {

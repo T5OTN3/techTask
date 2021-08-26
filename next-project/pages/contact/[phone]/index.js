@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import axios from 'axios';
 import Head from 'next/head';
-import { VerifyInput } from '../../../components/Form/elements/VerifyInput';
+import { VerifyInput } from './../../../components/Form/elements/VerifyInput';
 import { Button, Typography } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import Collapse from '@material-ui/core/Collapse';
@@ -31,7 +31,7 @@ const verifyPhone = ({ state, userInfo }) => {
         if(res.data.info === 'valid'){
             setOpenSuccesAlert(true);
             setTimeout(() => {
-                router.push('/create');
+                router.push('/');
             }, 1000)
         }else{
             setOpenErrorAlert(true)
