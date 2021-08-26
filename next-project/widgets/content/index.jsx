@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { server } from './../../config';
-import Cards from './../../components/cards';
+import Cards from './../../components/Cards';
 
 const Content = () => {
     const [blogs, setBlogs] = useState([]);
