@@ -31,8 +31,8 @@ export default async function handler(req, res){
                     phone: phone
                 }
             });
-            obj.smsConfirmed = result.smsConfirmed;
-            obj.id = result.id;
+            console.log(result);
+            obj.smsConfirmed = result?.smsConfirmed || false;
         }
 
         res.status(200).json({
