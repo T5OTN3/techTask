@@ -63,7 +63,7 @@ export default function Home() {
         </label>
       </div>
       </form>
-      <div className="flex flex-wrap py-3 border-dotted border-4 border-light-blue-500">
+      <div className="flex flex-wrap py-3 mt-5 border-dotted border-4 border-light-blue-500">
         {preview && preview.map((file, key) => {
           return (   
               <div key={key} className="px-2 py-3 relative">
