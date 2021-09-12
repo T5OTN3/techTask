@@ -67,7 +67,7 @@ export default function Home() {
   };
 
   const router = useRouter()
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors }, reset } = useForm({
       mode: "all",
       resolver: yupResolver(schema)
   });
@@ -87,9 +87,8 @@ export default function Home() {
     const response = await axios.post('/api/admin/blog/uploads', formData);
     console.log(response.data);
     setOpenSuccessAlert(true);
-    setTimeout(() => {
-      router.push('/');
-  }, 2000);
+    reset();
+    setImages([]);
   }
 
   const onFormError = (errors, e) => console.log(errors, e); 
