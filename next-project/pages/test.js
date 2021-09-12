@@ -53,6 +53,7 @@ export default function Home() {
     i18n.changeLanguage(language);
   }
   //Image controll
+  const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
   const [openErrorAlert, setOpenErrorAlert] = useState(false);
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
@@ -85,7 +86,10 @@ export default function Home() {
   
     const response = await axios.post('/api/admin/blog/uploads', formData);
     console.log(response.data);
-    //router.push(`/`);
+    setOpenSuccessAlert(true);
+    setTimeout(() => {
+      router.push('/');
+  }, 2000);
   }
 
   const onFormError = (errors, e) => console.log(errors, e); 
@@ -125,6 +129,9 @@ export default function Home() {
     <div>
       <Collapse in={openErrorAlert} timeout='auto'>
         <Alert severity="error" onClose={() => {setOpenErrorAlert(false);}}>You can select minimum 1 and maximum 10 image</Alert>
+      </Collapse>
+      <Collapse in={openSuccessAlert} timeout='auto'>
+        <Alert severity="success" onClose={() => {setOpenSuccessAlert(false);}}>You successfully created blog</Alert>
       </Collapse>
       <form>
       <div className="bg-grey-lighter">
