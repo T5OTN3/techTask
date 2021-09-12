@@ -12,10 +12,11 @@ const Cards = ({ data }) => {
     const resPerPage = 6;
 
     useEffect(() => {
+        console.log(blogs)
         const start = (page - 1) * resPerPage;
         const end = page * resPerPage;
         setBlogs(data.slice(start, end));
-    })
+    },[data, page])
 
     const selectPage = ({ selected }) => {
             setPage(selected + 1);
@@ -24,13 +25,12 @@ const Cards = ({ data }) => {
             setBlogs(data.slice(start, end));
     }
 
-
     return (
         <>
-            <section class="flex flex-row flex-wrap mx-auto">
+            <section className="flex flex-row flex-wrap mx-auto">
                 {
                     blogs.map((el, index) => (
-                            <BlogCard id={el.id} author={el.author} content={el.content}/> 
+                            <BlogCard id={el.id} title={el.title} shortText={el.shortText} date={el.createDate} images={el.images}/> 
                     ))
                 }
             </section>

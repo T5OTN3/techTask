@@ -14,7 +14,8 @@ function handler(req, res) {
         const blog = await prisma.blogs.findUnique({
             where: {
                 id: +id
-            }
+            },
+            include: { images: true }
         });
         return res.status(200).json({
             status: 'success',

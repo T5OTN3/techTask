@@ -1,0 +1,11 @@
+{
+    "blog": {
+        "create": {
+            "title": "Titel",
+            "metaDescription": "Meta Beschreibung",
+            "metaKeywords": "Meta Keywords",
+            "shortText": "kurzer Text",
+            "blogText": "Blogtext"
+        }
+    }
+}

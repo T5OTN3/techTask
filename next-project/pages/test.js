@@ -1,15 +1,94 @@
+import { Trans, useTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
 import { CloudUploadIcon } from '@heroicons/react/solid'
 import Alert from '@material-ui/lab/Alert';
 import Collapse from '@material-ui/core/Collapse';
+import axios from 'axios';
+import FormData from 'form-data'
+import { SubmitButton } from './../components/Form/elements/SubmitButton';
+//Form and input validation
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import {Form} from './../components/Form/elements/Form';
+import { Input } from './../components/Form/elements/Input';
+import { InputMultiline } from './../components/Form/elements/InputMultiline';
+import { useRouter } from 'next/router';
+import { useForm } from 'react-hook-form';
+//Tab control UI
+import { makeStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Tab from '@material-ui/core/Tab';
+import TabContext from '@material-ui/lab/TabContext';
+import TabList from '@material-ui/lab/TabList';
+import TabPanel from '@material-ui/lab/TabPanel';
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.paper,
+  },
+}));
 
+yup.addMethod(yup.string, 'checkMessage', function (errorMessage) {
+  return this.test(`blogText`, errorMessage, function (value) {
+      const { createError } = this;
+      
+      return value.match(/[#^&*<>]/) ? createError({ message: errorMessage }) : true;
+    });
+});
 
+const schema = yup.object().shape({
+  title: yup.string().required("title is a required field"),
+  metaDescription: yup.string().required("title is a required field"),
+  metaKeywords: yup.string().required("title is a required field"),
+  shortText: yup.string().required("title is a required field"),
+  blogText: yup.string().min(10).max(1500).checkMessage("Allowed only plain text").required("Message is a required field"),
+});
 
 export default function Home() {
+  //Translation
+  const { t, i18n } =useTranslation();
+
+  const changeLanguage = (language) => {
+    i18n.changeLanguage(language);
+  }
+  //Image controll
   const [openErrorAlert, setOpenErrorAlert] = useState(false);
   const [images, setImages] = useState([]);
-  const [preview, setPreview] = useState([])
+  const [preview, setPreview] = useState([]);
+  //Tab controll
+  const classes = useStyles();
+  const [value, setValue] = useState('en');
+
+  const handleChange = (event, newValue) => {
+    changeLanguage(newValue);
+    setValue(newValue);
+  };
+
+  const router = useRouter()
+  const { register, handleSubmit, formState: { errors } } = useForm({
+      mode: "all",
+      resolver: yupResolver(schema)
+  });
+
+  const onFormSubmit = async (data) => {
+    if(images.length === 0){
+      setOpenErrorAlert(true)
+      return
+    }
+    const obj = {...data, lan: value }
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(obj));
+    for(let i = 0; i < images.length; i++){
+      formData.append('images', images[i]);
+    };
+  
+    const response = await axios.post('/api/admin/blog/uploads', formData);
+    console.log(response.data);
+    //router.push(`/`);
+  }
+
+  const onFormError = (errors, e) => console.log(errors, e); 
 
   // create a preview as a side effect, whenever selected file is changed
   useEffect(() => {
@@ -27,13 +106,14 @@ export default function Home() {
 
       // free memory when ever this component is unmounted
       return () => URL.revokeObjectURL(arrUrl)
-  }, [images])
+  }, [images]);
 
-  const _onChange = (e) => {
+  const _onChange = async (e) => {
     if(e.target.files.length > 10){
       setOpenErrorAlert(true)
       return
     }
+
     setImages(e.target.files);
   }
 
@@ -43,9 +123,8 @@ export default function Home() {
 
   return (
     <div>
-
       <Collapse in={openErrorAlert} timeout='auto'>
-        <Alert severity="error" onClose={() => {setOpenErrorAlert(false);}}>You can select maximum 10 image</Alert>
+        <Alert severity="error" onClose={() => {setOpenErrorAlert(false);}}>You can select minimum 1 and maximum 10 image</Alert>
       </Collapse>
       <form>
       <div className="bg-grey-lighter">
@@ -77,6 +156,48 @@ export default function Home() {
               </div>   
           )
         })}
+      </div>
+      <br/>
+      <div className={classes.root}>
+        <TabContext value={value}>
+          <AppBar position="static">
+            <TabList onChange={handleChange} aria-label="simple tabs example">
+              <Tab label="EN" value="en" />
+              <Tab label="DE" value="de" />
+              <Tab label="FR" value="fr" />
+            </TabList>
+          </AppBar>
+          <TabPanel value="en">
+          <Form onSubmit={handleSubmit(onFormSubmit, onFormError)}>
+            <Input name="title" type="text" label={(<Trans i18nKey="blog.create.title">Title EN</Trans>)} {...register("title", { required: "Required"})} required error={!! errors.title} helpertext={errors?.title?.message}></Input>
+            <Input name="metaDescription" type="text" label={t("blog.create.metaDescription")} {...register("metaDescription", { required: "Required"})} required error={!! errors.metaDescription} helpertext={errors?.metaDescription?.message}></Input>
+            <Input name="metaKeywords" type="text" label={t("blog.create.metaKeywords")} {...register("metaKeywords", { required: "Required"})} required error={!! errors.metaKeywords} helpertext={errors?.metaKeywords?.message}></Input>
+            <Input name="shortText" type="text" label={t("blog.create.shortText")} {...register("shortText", { required: "Required"})} required error={!! errors.shortText} helpertext={errors?.shortText?.message}></Input>
+            <InputMultiline name="blogText" type="text" label={t("blog.create.blogText")} {...register("blogText", { required: "Required"})} required error={!! errors.blogText} helpertext={errors?.blogText?.message}></InputMultiline>
+            <SubmitButton>Send</SubmitButton>
+          </Form>
+          </TabPanel>
+          <TabPanel value="de">
+          <Form onSubmit={handleSubmit(onFormSubmit, onFormError)}>
+            <Input name="title" type="text" label={t("blog.create.title")}{...register("title", { required: "Required"})} required error={!! errors.title} helpertext={errors?.title?.message}></Input>
+            <Input name="metaDescription" type="text" label={t("blog.create.metaDescription")} {...register("metaDescription", { required: "Required"})} required error={!! errors.metaDescription} helpertext={errors?.metaDescription?.message}></Input>
+            <Input name="metaKeywords" type="text" label={t("blog.create.metaKeywords")} {...register("metaKeywords", { required: "Required"})} required error={!! errors.metaKeywords} helpertext={errors?.metaKeywords?.message}></Input>
+            <Input name="shortText" type="text" label={t("blog.create.shortText")} {...register("shortText", { required: "Required"})} required error={!! errors.shortText} helpertext={errors?.shortText?.message}></Input>
+            <InputMultiline name="blogText" type="text" label={t("blog.create.blogText")} {...register("blogText", { required: "Required"})} required error={!! errors.blogText} helpertext={errors?.blogText?.message}></InputMultiline>
+            <SubmitButton>Send</SubmitButton>
+          </Form>
+          </TabPanel>
+          <TabPanel value="fr">
+          <Form onSubmit={handleSubmit(onFormSubmit, onFormError)}>
+            <Input name="title" type="text" label={t("blog.create.title")} {...register("title", { required: "Required"})} required error={!! errors.title} helpertext={errors?.title?.message}></Input>
+            <Input name="metaDescription" type="text" label={t("blog.create.metaDescription")} {...register("metaDescription", { required: "Required"})} required error={!! errors.metaDescription} helpertext={errors?.metaDescription?.message}></Input>
+            <Input name="metaKeywords" type="text" label={t("blog.create.metaKeywords")} {...register("metaKeywords", { required: "Required"})} required error={!! errors.metaKeywords} helpertext={errors?.metaKeywords?.message}></Input>
+            <Input name="shortText" type="text" label={t("blog.create.shortText")} {...register("shortText", { required: "Required"})} required error={!! errors.shortText} helpertext={errors?.shortText?.message}></Input>
+            <InputMultiline name="blogText" type="text" label={t("blog.create.blogText")} {...register("blogText", { required: "Required"})} required error={!! errors.blogText} helpertext={errors?.blogText?.message}></InputMultiline>
+            <SubmitButton>Send</SubmitButton>
+          </Form>
+          </TabPanel>
+        </TabContext>
       </div>
     </div>
   )

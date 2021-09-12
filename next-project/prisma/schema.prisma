@@ -35,7 +35,20 @@ model Contact {
 model Blogs{
   @@map(name: "blog")
   id Int @id @default(autoincrement())
-  content String @db.Text
-  author String @db.VarChar(255)
+  lang String @db.VarChar(255)
+  title String @db.VarChar(255)
+  shortText String @db.Text
+  blogText String @db.Text
+  metaDescription String @db.VarChar(255)
+  metaKeywords String @db.VarChar(255)
+  images Images[]
   createDate  DateTime? @default(now())
+}
+
+model Images {
+  id       Int  @id @default(autoincrement())
+  imageName String
+  folderName String
+  blog   Blogs @relation(fields: [blogId], references: [id])
+  blogId Int
 }

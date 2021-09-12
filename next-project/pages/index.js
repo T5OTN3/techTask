@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import Content from './../widgets/content';
 import { useState } from 'react';
-
 import ChatBot from 'react-simple-chatbot';
 import { ThemeProvider } from 'styled-components';
 

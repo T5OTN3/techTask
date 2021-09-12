@@ -1,6 +1,7 @@
+import Link from 'next/link';
+import Button from '@material-ui/core/Button';
 
-
-export default function BlogCard({ id, author, content }){
+export default function BlogCard({ id, title, shortText, date, images }){
     return(
 <>
 
@@ -8,14 +9,14 @@ export default function BlogCard({ id, author, content }){
     <div class="flex flex-col items-stretch min-h-full pb-4 mb-6 transition-all duration-150 bg-white rounded-lg shadow-lg hover:shadow-2xl">
       <div class="md:flex-shrink-0">
         <img
-          src="https://www.unfe.org/wp-content/uploads/2019/04/SM-placeholder-1024x512.png"
+          src={`Blogs/${images[0].folderName}/${images[0].imageName}`}
           alt="Blog Cover"
           class="object-fill w-full rounded-lg rounded-b-none md:h-56"
         />
       </div>
       <div class="flex items-center justify-between px-4 py-2 overflow-hidden">
         <span class="text-xs font-medium text-blue-600 uppercase">
-          Web Programming
+          Facebook
         </span>
         <div class="flex flex-row items-center">
           <div class="text-xs font-medium text-gray-500 flex flex-row items-center mr-2">
@@ -45,7 +46,7 @@ export default function BlogCard({ id, author, content }){
       <div class="flex flex-wrap items-center flex-1 px-4 py-1 text-center mx-auto">
         <a href="#" class="hover:underline">
           <h2 class="text-2xl font-bold tracking-normal text-gray-800">
-            Ho to Yawn in 7 Days
+            {title}
           </h2>
         </a>
       </div>
@@ -53,28 +54,26 @@ export default function BlogCard({ id, author, content }){
       <p
         class="flex flex-row flex-wrap w-full px-4 py-2 overflow-hidden text-sm text-justify text-gray-700"
       >
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias, magni
-        fugiat, odit incidunt necessitatibus aut nesciunt exercitationem aliquam
-        id voluptatibus quisquam maiores officia sit amet accusantium aliquid
-        quo obcaecati quasi.
+        {shortText}
       </p>
       <hr class="border-gray-300" />
       <section class="px-4 py-2 mt-2">
         <div class="flex items-center justify-between">
           <div class="flex items-center flex-1">
-            <img
-              class="object-cover h-10 rounded-full"
-              src="https://thumbs.dreamstime.com/b/default-avatar-photo-placeholder-profile-icon-eps-file-easy-to-edit-default-avatar-photo-placeholder-profile-icon-124557887.jpg"
-              alt="Avatar"
-            />
             <div class="flex flex-col mx-2">
               <a href="" class="font-semibold text-gray-700 hover:underline">
-                Fajrian Aidil Pratama
+                Admin
               </a>
-              <span class="mx-1 text-xs text-gray-600">28 Sep 2020</span>
+              <span class="text-xs text-gray-600">{new Date(date).toDateString()}</span>
             </div>
           </div>
-          <p class="mt-1 text-xs text-gray-600">9 minutes read</p>
+          <p class="mt-1 text-xs text-gray-600">
+          <Link href="/blogs/[id]" as={`/blogs/${id}`}>
+            <Button size="small" color="primary">
+              Show More
+            </Button>
+          </Link>
+          </p>
         </div>
       </section>
     </div>

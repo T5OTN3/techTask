@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import { server } from './../../../config'
 import Head from 'next/head';
-import BlogCard from './../../../components/Blog';
+import SingleBlog from './../../../components/Blog';
 
 const blog = ({ blog }) => {
     const router = useRouter();
@@ -10,7 +10,7 @@ const blog = ({ blog }) => {
 
     return(
         <div>
-            <BlogCard id={id} author={blog.data.author} content={blog.data.content} date={blog.data.createDate}/>
+            <SingleBlog id={id} title={blog.data.title} blogText={blog.data.blogText} date={blog.data.createDate} images={blog.data.images}/>
             <Head>
                 <title>Blog</title>
             </Head>

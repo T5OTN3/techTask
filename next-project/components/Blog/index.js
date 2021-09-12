@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function BlogCard({id, author, content, date }) {
+export default function BlogCard({id, title, blogText, date, images }) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
 
@@ -58,10 +58,10 @@ export default function BlogCard({id, author, content, date }) {
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="h2">
-         {author}
+         {title}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="div">
-          <div dangerouslySetInnerHTML={{ __html: content }}></div> 
+          {blogText}
         </Typography>
       </CardContent>
       <CardActions>
