@@ -1,5 +1,4 @@
 import { Trans, useTranslation } from 'react-i18next'
-
 import { useEffect, useState } from 'react'
 import { CloudUploadIcon } from '@heroicons/react/solid'
 import Alert from '@material-ui/lab/Alert';
