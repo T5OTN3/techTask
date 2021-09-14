@@ -29,9 +29,10 @@ const Cards = ({ data }) => {
         <>
             <section className="flex flex-row flex-wrap mx-auto">
                 {
-                    blogs.map((el, index) => (
-                            <BlogCard id={el.id} title={el.title} shortText={el.shortText} date={el.createDate} images={el.images}/> 
-                    ))
+                    blogs.map((el, index) => {
+                        const image = el.images.find(el => el.type === 'primary');
+                        return (<BlogCard id={el.id} title={el.title} shortText={el.shortText} date={el.createDate} image={image} />) 
+                    })
                 }
             </section>
             <ReactPaginate 

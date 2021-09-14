@@ -1,8 +1,10 @@
 import { Trans, useTranslation } from 'react-i18next'
+
 import { useEffect, useState } from 'react'
 import { CloudUploadIcon } from '@heroicons/react/solid'
 import Alert from '@material-ui/lab/Alert';
 import Collapse from '@material-ui/core/Collapse';
+import Radio from '@material-ui/core/Radio';
 import axios from 'axios';
 import FormData from 'form-data'
 import { SubmitButton } from './../components/Form/elements/SubmitButton';
@@ -46,6 +48,12 @@ const schema = yup.object().shape({
 });
 
 export default function Home() {
+  //RadioButton to make Primary image
+  const [selectedValue, setSelectedValue] = useState(0);
+
+  const radioHandleChange = (event) => {
+    setSelectedValue(+event.target.value);
+  };
   //Translation
   const { t, i18n } =useTranslation();
 
@@ -61,7 +69,7 @@ export default function Home() {
   const classes = useStyles();
   const [value, setValue] = useState('en');
 
-  const handleChange = (event, newValue) => {
+  const tabHandleChange = (event, newValue) => {
     changeLanguage(newValue);
     setValue(newValue);
   };
@@ -77,7 +85,7 @@ export default function Home() {
       setOpenErrorAlert(true)
       return
     }
-    const obj = {...data, lan: value }
+    const obj = {...data, lan: value, imageIndex: selectedValue, image360: 'null' }
     const formData = new FormData();
     formData.append('data', JSON.stringify(obj));
     for(let i = 0; i < images.length; i++){
@@ -91,7 +99,10 @@ export default function Home() {
     setImages([]);
   }
 
-  const onFormError = (errors, e) => console.log(errors, e); 
+  const onFormError = (errors, e) => {
+    console.log(selectedValue);
+    console.log(errors, e); 
+  }
 
   // create a preview as a side effect, whenever selected file is changed
   useEffect(() => {
@@ -112,15 +123,16 @@ export default function Home() {
   }, [images]);
 
   const _onChange = async (e) => {
-    if(e.target.files.length > 10){
+    if((images.length + e.target.files.length) > 10){
       setOpenErrorAlert(true)
       return
     }
-
-    setImages(e.target.files);
+    setPreview([]);
+    setImages([...images,...e.target.files]);
   }
 
   const _removeImage = (index) => {
+    console.log(index)
     setImages([...images].filter((file, i) => i != index));
   }
 
@@ -159,6 +171,16 @@ export default function Home() {
                     <span>×</span>
                   </button>
                   <img className="object-contain h-20 w-full" src={file}  alt={file.name}/>
+                  <div className="absolute left-0 -bottom-4">
+                    <Radio
+                      checked={selectedValue === key}
+                      color='primary'
+                      onChange={radioHandleChange}
+                      value={key}
+                      name="imagePrimary"
+                      size="small"
+                    />
+                  </div>
               </div>   
           )
         })}
@@ -167,7 +189,7 @@ export default function Home() {
       <div className={classes.root}>
         <TabContext value={value}>
           <AppBar position="static">
-            <TabList onChange={handleChange} aria-label="simple tabs example">
+            <TabList onChange={tabHandleChange} aria-label="simple tabs example">
               <Tab label="EN" value="en" />
               <Tab label="DE" value="de" />
               <Tab label="FR" value="fr" />

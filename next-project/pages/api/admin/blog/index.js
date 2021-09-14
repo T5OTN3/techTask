@@ -13,7 +13,7 @@ function handler(req, res) {
     }
 
     async function  getBlogs() {
-        const blogs = await prisma.blogs.findMany({include: { images: true }});
+        const blogs = await prisma.blogs.findMany({include: { images: true, lang: true }});
         return res.status(200).json({
             status: 'success',
             data: blogs

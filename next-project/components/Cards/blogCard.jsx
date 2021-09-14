@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Button from '@material-ui/core/Button';
 
-export default function BlogCard({ id, title, shortText, date, images }){
+export default function BlogCard({ id, title, shortText, date, image }){
     return(
 <>
 
@@ -9,7 +9,7 @@ export default function BlogCard({ id, title, shortText, date, images }){
     <div class="flex flex-col items-stretch min-h-full pb-4 mb-6 transition-all duration-150 bg-white rounded-lg shadow-lg hover:shadow-2xl">
       <div class="md:flex-shrink-0">
         <img
-          src={`/Blogs/${images[0].folderName}/${images[0].imageName}`}
+          src={`/Blogs/${image?.folderName}/${image?.imageName}`}
           alt="Blog Cover"
           class="object-fill w-full rounded-lg rounded-b-none md:h-56"
         />

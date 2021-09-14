@@ -38,13 +38,15 @@ apiRoute.post( async (req, res) => {
     const { data } = req.body;
     const obj = JSON.parse(data);
 
-    const imageArr = req.files.map(el => {
-        return { imageName: el.filename, folderName: req.imagePath }
+    const imageArr = req.files.map((el, index) => {
+        const type = index === obj.imageIndex ? 'primary' : 'secondary';
+        const image360 = obj.image360;
+        return { imageName: el.filename, folderName: req.imagePath, type, image360 }
     });
 
     const newBlog = await prisma.blogs.create({
         data: {
-            lang: obj.lan,
+            lang: { create: [{ language: obj.lan}] },
             title: obj.title,
             shortText: obj.shortText,
             blogText: obj.blogText,

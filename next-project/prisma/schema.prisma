@@ -35,7 +35,7 @@ model Contact {
 model Blogs{
   @@map(name: "blog")
   id Int @id @default(autoincrement())
-  lang String @db.VarChar(255)
+  lang Lang[]
   title String @db.VarChar(255)
   shortText String @db.Text
   blogText String @db.Text
@@ -47,8 +47,17 @@ model Blogs{
 
 model Images {
   id       Int  @id @default(autoincrement())
-  imageName String
-  folderName String
+  imageName String @db.VarChar(255)
+  folderName String @db.VarChar(255)
+  type String @db.VarChar(255) @default("secondary")
+  image360 String @db.VarChar(255) @default("null")
+  blog   Blogs @relation(fields: [blogId], references: [id])
+  blogId Int
+}
+
+model Lang {
+  id       Int  @id @default(autoincrement())
+  language String
   blog   Blogs @relation(fields: [blogId], references: [id])
   blogId Int
 }
