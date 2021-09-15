@@ -3,7 +3,11 @@ import { useEffect, useState } from 'react'
 import { CloudUploadIcon } from '@heroicons/react/solid'
 import Alert from '@material-ui/lab/Alert';
 import Collapse from '@material-ui/core/Collapse';
+
 import Radio from '@material-ui/core/Radio';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+
 import axios from 'axios';
 import FormData from 'form-data'
 import { SubmitButton } from './../components/Form/elements/SubmitButton';
@@ -64,6 +68,7 @@ export default function Home() {
   const [openErrorAlert, setOpenErrorAlert] = useState(false);
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
+  const [image360, setimage360] = useState(false);
   //Tab controll
   const classes = useStyles();
   const [value, setValue] = useState('en');
@@ -84,7 +89,7 @@ export default function Home() {
       setOpenErrorAlert(true)
       return
     }
-    const obj = {...data, lan: value, imageIndex: selectedValue, image360: 'null' }
+    const obj = {...data, lan: value, imageIndex: selectedValue, image360 }
     const formData = new FormData();
     formData.append('data', JSON.stringify(obj));
     for(let i = 0; i < images.length; i++){
@@ -157,12 +162,16 @@ export default function Home() {
           onChange={(e) => _onChange(e) }
         />
         </label>
+        <FormControlLabel
+          control={<Checkbox checked={image360} onChange={() => setimage360(!image360)} name="panorama" />}
+          label="Check if primary image is panorama"
+        />
       </div>
       </form>
-      <div className="flex flex-wrap py-3 mt-5 border-dotted border-4 border-light-blue-500">
+      <div className="flex flex-wrap py-5 mt-5 border-dotted border-4 border-light-blue-500">
         {preview && preview.map((file, key) => {
           return (   
-              <div key={key} className="px-2 py-3 relative">
+              <div key={key} className="px-2 py-3 w-2/12 relative">
                   <button
                     className="absolute bg-transparent text-2xl text-red-500 font-semibold leading-none right-1 top-0 outline-none focus:outline-none"
                     onClick={() => _removeImage(key)}
@@ -170,15 +179,17 @@ export default function Home() {
                     <span>×</span>
                   </button>
                   <img className="object-contain h-20 w-full" src={file}  alt={file.name}/>
-                  <div className="absolute left-0 -bottom-4">
+                  <div className="absolute left-0 -bottom-6">
+                  <FormControlLabel control={
                     <Radio
-                      checked={selectedValue === key}
-                      color='primary'
-                      onChange={radioHandleChange}
-                      value={key}
-                      name="imagePrimary"
-                      size="small"
-                    />
+                        checked={selectedValue === key}
+                        color='primary'
+                        onChange={radioHandleChange}
+                        value={key}
+                        name="imagePrimary"
+                        size="small"
+                      />
+                    } label="primary" />          
                   </div>
               </div>   
           )

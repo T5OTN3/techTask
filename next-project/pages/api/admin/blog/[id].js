@@ -15,8 +15,9 @@ function handler(req, res) {
             where: {
                 id: +id
             },
-            include: { images: true }
+            include: { images: true, posts: true }
         });
+
         return res.status(200).json({
             status: 'success',
             data: blog

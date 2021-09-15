@@ -35,29 +35,38 @@ model Contact {
 model Blogs{
   @@map(name: "blog")
   id Int @id @default(autoincrement())
-  lang Lang[]
+  posts Posts[]
+  images Images[]
+  status Status @default(partiallyPublished)
+  archive Boolean @default(false)
+  createDate  DateTime? @default(now())
+  updateDate DateTime @default(now())
+}
+
+model Images {
+  id Int  @id @default(autoincrement())
+  imageName String @db.VarChar(255)
+  folderName String @db.VarChar(255)
+  type String @db.VarChar(255) @default("secondary")
+  image360 Boolean @default(false)
+  blog   Blogs @relation(fields: [blogId], references: [id])
+  blogId Int
+}
+
+model Posts {
+  @@map(name: "posts")
+  id Int  @id @default(autoincrement())
   title String @db.VarChar(255)
   shortText String @db.Text
   blogText String @db.Text
   metaDescription String @db.VarChar(255)
   metaKeywords String @db.VarChar(255)
-  images Images[]
-  createDate  DateTime? @default(now())
-}
-
-model Images {
-  id       Int  @id @default(autoincrement())
-  imageName String @db.VarChar(255)
-  folderName String @db.VarChar(255)
-  type String @db.VarChar(255) @default("secondary")
-  image360 String @db.VarChar(255) @default("null")
-  blog   Blogs @relation(fields: [blogId], references: [id])
-  blogId Int
-}
-
-model Lang {
-  id       Int  @id @default(autoincrement())
   language String
   blog   Blogs @relation(fields: [blogId], references: [id])
   blogId Int
+}
+
+enum Status {
+  fullyPublished
+  partiallyPublished
 }

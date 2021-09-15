@@ -10,7 +10,7 @@ const blog = ({ blog }) => {
 
     return(
         <div>
-            <SingleBlog id={id} title={blog.data.title} blogText={blog.data.blogText} date={blog.data.createDate} images={blog.data.images}/>
+            <SingleBlog id={id} title={blog.data.posts[0].title} blogText={blog.data.posts[0].blogText} date={blog.data.createDate} images={blog.data.images}/>
             <Head>
                 <title>Blog</title>
             </Head>

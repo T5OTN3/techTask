@@ -12,17 +12,16 @@ const Cards = ({ data }) => {
     const resPerPage = 6;
 
     useEffect(() => {
-        console.log(blogs)
         const start = (page - 1) * resPerPage;
         const end = page * resPerPage;
         setBlogs(data.slice(start, end));
     },[data, page])
 
     const selectPage = ({ selected }) => {
-            setPage(selected + 1);
-            const start = (page - 1) * resPerPage;
-            const end = page * resPerPage;
-            setBlogs(data.slice(start, end));
+        setPage(selected + 1);
+        const start = (page - 1) * resPerPage;
+        const end = page * resPerPage;
+        setBlogs(data.slice(start, end));
     }
 
     return (
@@ -31,7 +30,7 @@ const Cards = ({ data }) => {
                 {
                     blogs.map((el, index) => {
                         const image = el.images.find(el => el.type === 'primary');
-                        return (<BlogCard id={el.id} title={el.title} shortText={el.shortText} date={el.createDate} image={image} />) 
+                        return (<BlogCard key={el.id} id={el.id} title={el.posts[0].title} shortText={el.posts[0].shortText} date={el.posts[0].createDate} image={image} />) 
                     })
                 }
             </section>
