@@ -1,18 +1,44 @@
 import Link from 'next/link';
 import Button from '@material-ui/core/Button';
+import ReactPannellum, { getConfig } from "react-pannellum";
 
 export default function BlogCard({ id, title, shortText, date, image }){
+  const config = {
+    autoRotate: -2,
+    autoLoad: true,
+    author: "React Team"
+  };
+
     return(
 <>
 
   <div class="transition-all duration-150 flex w-full px-4 py-6 md:w-1/2 lg:w-1/3">
     <div class="flex flex-col items-stretch min-h-full pb-4 mb-6 transition-all duration-150 bg-white rounded-lg shadow-lg hover:shadow-2xl">
       <div class="md:flex-shrink-0">
-        <img
-          src={`/Blogs/${image?.folderName}/${image?.imageName}`}
-          alt="Blog Cover"
-          class="object-fill w-full rounded-lg rounded-b-none md:h-56"
-        />
+        {
+          id === 7 ? (
+            <div>
+              <ReactPannellum
+                width="100px"
+                height="150px"
+                id={`${id}`}
+                sceneId="firstScene"
+                imageSource="/Blogs/360/PANO_1.jpeg"
+                config={config}
+                style={{
+                  width: "100%",
+                  height: "150px",
+                }}
+              />
+            </div>
+          ):(
+            <img
+              src={`/Blogs/${image?.folderName}/${image?.imageName}`}
+              alt="Blog Cover"
+              class="object-fill w-full rounded-lg rounded-b-none md:h-56"
+            />
+          )
+        }
       </div>
       <div class="flex items-center justify-between px-4 py-2 overflow-hidden">
         <span class="text-xs font-medium text-blue-600 uppercase">
