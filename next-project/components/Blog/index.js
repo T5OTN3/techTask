@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, rgbToHex } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -12,6 +12,11 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { red } from '@material-ui/core/colors';
 
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
+import ReactPannellum, { getConfig } from "react-pannellum";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,12 +42,50 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function SampleNextArrow(props) {
+  const { className, style, onClick } = props;
+  return (
+    <div
+      className={className}
+      style={{ ...style, display: "block", background: "red" }}
+      onClick={onClick}
+    />
+  );
+}
+
+function SamplePrevArrow(props) {
+  const { className, style, onClick } = props;
+  return (
+    <div
+      className={className}
+      style={{ ...style, display: "block", background: "red" }}
+      onClick={onClick}
+    />
+  );
+}
+
+const settings = {
+  dots: true,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  nextArrow: <SampleNextArrow />,
+  prevArrow: <SamplePrevArrow />
+};
+
 export default function BlogCard({id, title, blogText, date, images }) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
+  };
+
+  const config = {
+    autoRotate: -8,
+    autoLoad: true,
+    author: "React Team"
   };
 
   return (
@@ -57,6 +100,36 @@ export default function BlogCard({id, title, blogText, date, images }) {
         subheader={new Date(date).toDateString()}
       />
       <CardContent>
+        <div style={{ margin: '20px' }}>
+          <Slider {...settings}>
+          {
+            images.map((el, index) => 
+              el.image360 ? (
+                <div key={index}>
+                  <ReactPannellum
+                    width="100px"
+                    height="150px"
+                    id={`${id}`}
+                    sceneId="firstScene"
+                    imageSource={`/Blogs/${el?.folderName}/${el?.imageName}`}
+                    config={config}
+                    style={{
+                      width: "100%",
+                      height: "150px",
+                    }}
+                  />
+                </div>
+              ):(
+                <img
+                  src={`/Blogs/${el?.folderName}/${el?.imageName}`}
+                  alt="Blog Cover"
+                  className="object-fill w-full rounded-lg rounded-b-none md:h-56"
+                />
+              )  
+            )
+          }
+          </Slider>
+        </div>
         <Typography gutterBottom variant="h5" component="h2">
          {title}
         </Typography>
