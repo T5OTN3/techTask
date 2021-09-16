@@ -101,6 +101,9 @@ export default function Home() {
     setOpenSuccessAlert(true);
     reset();
     setImages([]);
+    setTimeout(() => {
+      router.push(`/edit/${response.data.id}`);
+    }, 2000);
   }
 
   const onFormError = (errors, e) => {
