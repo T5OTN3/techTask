@@ -66,12 +66,13 @@ function SamplePrevArrow(props) {
 
 const settings = {
   dots: true,
+  fade: true,
   infinite: true,
   speed: 500,
   slidesToShow: 1,
   slidesToScroll: 1,
-  nextArrow: <SampleNextArrow />,
-  prevArrow: <SamplePrevArrow />
+/*   nextArrow: <SampleNextArrow />,
+  prevArrow: <SamplePrevArrow /> */
 };
 
 export default function BlogCard({id, title, blogText, date, images }) {
@@ -81,6 +82,33 @@ export default function BlogCard({id, title, blogText, date, images }) {
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  function imagesComponent(){
+    return (images.map(el => el.image360 ? (
+      <div key={id}>
+        <ReactPannellum
+          id={`${id}`}
+          sceneId={`${id}`}
+          imageSource={`/Blogs/${el?.folderName}/${el?.imageName}`}
+          config={config}
+          style={{
+            width: "100%",
+            height: "350px",
+            display: "block"
+          }}
+        />
+      </div>
+      ):(
+        <div key={id}>
+          <img
+            src={`/Blogs/${el?.folderName}/${el?.imageName}`}
+            alt="Blog Cover"
+            className="object-fill h-full w-auto rounded-lg rounded-b-none md:h-56"
+          />
+        </div> 
+      ))
+    )
+  }
 
   const config = {
     autoRotate: -8,
@@ -102,32 +130,9 @@ export default function BlogCard({id, title, blogText, date, images }) {
       <CardContent>
         <div style={{ margin: '20px' }}>
           <Slider {...settings}>
-          {
-            images.map((el, index) => 
-              el.image360 ? (
-                <div key={index}>
-                  <ReactPannellum
-                    width="100px"
-                    height="150px"
-                    id={`${id}`}
-                    sceneId="firstScene"
-                    imageSource={`/Blogs/${el?.folderName}/${el?.imageName}`}
-                    config={config}
-                    style={{
-                      width: "100%",
-                      height: "150px",
-                    }}
-                  />
-                </div>
-              ):(
-                <img
-                  src={`/Blogs/${el?.folderName}/${el?.imageName}`}
-                  alt="Blog Cover"
-                  className="object-fill w-full rounded-lg rounded-b-none md:h-56"
-                />
-              )  
-            )
-          }
+            {
+              imagesComponent()
+            }
           </Slider>
         </div>
         <Typography gutterBottom variant="h5" component="h2">
