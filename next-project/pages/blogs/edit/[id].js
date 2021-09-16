@@ -67,7 +67,7 @@ const blogEditById = ({ blog }) => {
   //Image controll
   const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
   const [openErrorAlert, setOpenErrorAlert] = useState(false);
-  const [images, setImages] = useState([...blog.images].map((file) => `/Blogs/${file.folderName}/${file.imageName}`));
+  const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
   const [image360, setimage360] = useState(false);
   //Tab controll
@@ -119,16 +119,19 @@ const blogEditById = ({ blog }) => {
   // create a preview as a side effect, whenever selected file is changed
   useEffect(() => {
       let arrUrl = [];
-
+        
       if (!images) {
           setPreview(undefined)
           return
       }
 
       images && [...images].map((file) => {
-        const blob = new Blob([file], {type: 'image/png'})
+        const blob = new Blob([file], {type: 'image/png'});
         arrUrl.push(URL.createObjectURL(blob));
       })
+
+      blog.images && blog.images.map(el => arrUrl.push(`http://31.146.26.29:3000/Blogs/${el?.folderName}/${el?.imageName}`))
+
       setPreview(arrUrl);
 
       // free memory when ever this component is unmounted
