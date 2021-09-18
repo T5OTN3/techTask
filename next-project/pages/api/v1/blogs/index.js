@@ -62,22 +62,31 @@
         const fieldsArr = queryFields ? queryFields.split(',') : 'id,title,shortText,blogText,metaDescription,metaKeywords,language,blogId'.split(',');
         const fieldsObj = fieldsArr.reduce((acc, cur) => ({ ...acc, [cur]: true }),{});
 
-        const posts = await prisma.posts.findMany({
+        const blogs = await prisma.blogs.findMany({
             where:{
-                ...queryObj,
-                ...or
+                posts:{
+                    some: {
+                        ...queryObj,
+                        ...or
+                    }
+                }
             },
-            select:{
-                ...fieldsObj
+            include: {
+                posts: {
+                    select:{
+                        ...fieldsObj
+                    }
+                },
+                images: true
             },
             ...paginate,
-            ...order
+            ...order    
         });
     
         res.status(200).json({ 
             status: 'success', 
-            length: posts.length,
-            data: posts 
+            length: blogs.length,
+            data: blogs 
         });
     });
     
