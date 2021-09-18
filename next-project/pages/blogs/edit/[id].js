@@ -10,15 +10,8 @@ import Collapse from '@material-ui/core/Collapse';
 import Radio from '@material-ui/core/Radio';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import FormData from 'form-data'
-import { SubmitButton } from './../../../components/Form/elements/SubmitButton';
 //Form and input validation
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import {Form} from './../../../components/Form/elements/Form';
-import { Input } from './../../../components/Form/elements/Input';
-import { InputMultiline } from './../../../components/Form/elements/InputMultiline';
-import { useForm } from 'react-hook-form';
+import PostsForm from './../../../components/Form/PostsForm';
 //Tab control UI
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -33,23 +26,6 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.background.paper,
     },
   }));
-  
-  yup.addMethod(yup.string, 'checkMessage', function (errorMessage) {
-    return this.test(`blogText`, errorMessage, function (value) {
-        const { createError } = this;
-        
-        return value.match(/[#^&*<>]/) ? createError({ message: errorMessage }) : true;
-      });
-  });
-  
-  const schema = yup.object().shape({
-    title: yup.string().required("title is a required field"),
-    metaDescription: yup.string().required("title is a required field"),
-    metaKeywords: yup.string().required("title is a required field"),
-    shortText: yup.string().required("title is a required field"),
-    blogText: yup.string().min(10).max(1500).checkMessage("Allowed only plain text").required("Message is a required field"),
-  });
-
 
 const blogEditById = ({ blog }) => {
     //RadioButton to make Primary image
@@ -58,18 +34,22 @@ const blogEditById = ({ blog }) => {
   const radioHandleChange = (event) => {
     setSelectedValue(+event.target.value);
   };
-  //Translation
-  const { t, i18n } =useTranslation();
+
+  // Translation
+  const { t, i18n } = useTranslation();
 
   const changeLanguage = (language) => {
     i18n.changeLanguage(language);
-  }
+}
+
   //Image controll
   const [openSuccessAlert, setOpenSuccessAlert] = useState(false);
   const [openErrorAlert, setOpenErrorAlert] = useState(false);
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
+  const [cloudImages, setCloudImages] = useState(blog.images);
   const [image360, setimage360] = useState(false);
+  const [posts, setPosts] = useState({...blog.posts.find(el => el.language === 'en')});
   //Tab controll
   const classes = useStyles();
   const [value, setValue] = useState('en');
@@ -77,44 +57,10 @@ const blogEditById = ({ blog }) => {
   const tabHandleChange = (event, newValue) => {
     changeLanguage(newValue);
     setValue(newValue);
+    setPosts(blog.posts.find(el => el.language === newValue));
   };
 
   const router = useRouter()
-  const { register, handleSubmit, formState: { errors }, reset } = useForm({
-      mode: "all",
-      resolver: yupResolver(schema),
-      defaultValues: {
-        title: blog.posts[0].title,
-        metaDescription: blog.posts[0].metaDescription,
-        metaKeywords: blog.posts[0].metaKeywords,
-        shortText: blog.posts[0].shortText,
-        blogText: blog.posts[0].blogText
-      }
-  });
-
-  const onFormSubmit = async (data) => {
-    if(images.length === 0){
-      setOpenErrorAlert(true)
-      return
-    }
-    const obj = {...data, lan: value, imageIndex: selectedValue, image360 }
-    const formData = new FormData();
-    formData.append('data', JSON.stringify(obj));
-    for(let i = 0; i < images.length; i++){
-      formData.append('images', images[i]);
-    };
-  
-    const response = await axios.post('/api/admin/blog/uploads', formData);
-    console.log(response.data);
-    setOpenSuccessAlert(true);
-    reset();
-    setImages([]);
-  }
-
-  const onFormError = (errors, e) => {
-    console.log(selectedValue);
-    console.log(errors, e); 
-  }
 
   // create a preview as a side effect, whenever selected file is changed
   useEffect(() => {
@@ -125,12 +71,12 @@ const blogEditById = ({ blog }) => {
           return
       }
 
+      cloudImages && cloudImages.map(el => arrUrl.push(`http://31.146.26.29:3000/Blogs/${el?.folderName}/${el?.imageName}`));
+      
       images && [...images].map((file) => {
         const blob = new Blob([file], {type: 'image/png'});
         arrUrl.push(URL.createObjectURL(blob));
       })
-
-      blog.images && blog.images.map(el => arrUrl.push(`http://31.146.26.29:3000/Blogs/${el?.folderName}/${el?.imageName}`))
 
       setPreview(arrUrl);
 
@@ -139,17 +85,16 @@ const blogEditById = ({ blog }) => {
   }, [images]);
 
   const _onChange = async (e) => {
-    if((images.length + e.target.files.length) > 10){
+    if((images.length + e.target.files.length + cloudImages.length) > 10){
       setOpenErrorAlert(true)
       return
     }
     setPreview([]);
-    console.log(images);
     setImages([...images,...e.target.files]);
   }
 
   const _removeImage = (index) => {
-    console.log(index)
+    setCloudImages([...cloudImages].filter((file, i) => i != index))
     setImages([...images].filter((file, i) => i != index));
   }
 
@@ -219,34 +164,13 @@ const blogEditById = ({ blog }) => {
                 </TabList>
               </AppBar>
               <TabPanel value="en">
-              <Form onSubmit={handleSubmit(onFormSubmit, onFormError)}>
-                <Input name="title" type="text" label={(<Trans i18nKey="blog.create.title">Title EN</Trans>)} {...register("title", { required: "Required"})} required error={!! errors.title} helpertext={errors?.title?.message}></Input>
-                <Input name="metaDescription" type="text" label={t("blog.create.metaDescription")} {...register("metaDescription", { required: "Required"})} required error={!! errors.metaDescription} helpertext={errors?.metaDescription?.message}></Input>
-                <Input name="metaKeywords" type="text" label={t("blog.create.metaKeywords")} {...register("metaKeywords", { required: "Required"})} required error={!! errors.metaKeywords} helpertext={errors?.metaKeywords?.message}></Input>
-                <Input name="shortText" type="text" label={t("blog.create.shortText")} {...register("shortText", { required: "Required"})} required error={!! errors.shortText} helpertext={errors?.shortText?.message}></Input>
-                <InputMultiline name="blogText" type="text" label={t("blog.create.blogText")} {...register("blogText", { required: "Required"})} required error={!! errors.blogText} helpertext={errors?.blogText?.message}></InputMultiline>
-                <SubmitButton>Send</SubmitButton>
-              </Form>
+                <PostsForm post={posts} lan={value} imageIndex={selectedValue} images={images} image360={image360} cloudImages={cloudImages} errorAlert={setOpenErrorAlert} />
               </TabPanel>
               <TabPanel value="de">
-              <Form onSubmit={handleSubmit(onFormSubmit, onFormError)}>
-                <Input name="title" type="text" label={t("blog.create.title")}{...register("title", { required: "Required"})} required error={!! errors.title} helpertext={errors?.title?.message}></Input>
-                <Input name="metaDescription" type="text" label={t("blog.create.metaDescription")} {...register("metaDescription", { required: "Required"})} required error={!! errors.metaDescription} helpertext={errors?.metaDescription?.message}></Input>
-                <Input name="metaKeywords" type="text" label={t("blog.create.metaKeywords")} {...register("metaKeywords", { required: "Required"})} required error={!! errors.metaKeywords} helpertext={errors?.metaKeywords?.message}></Input>
-                <Input name="shortText" type="text" label={t("blog.create.shortText")} {...register("shortText", { required: "Required"})} required error={!! errors.shortText} helpertext={errors?.shortText?.message}></Input>
-                <InputMultiline name="blogText" type="text" label={t("blog.create.blogText")} {...register("blogText", { required: "Required"})} required error={!! errors.blogText} helpertext={errors?.blogText?.message}></InputMultiline>
-                <SubmitButton>Send</SubmitButton>
-              </Form>
+                <PostsForm post={posts} lan={value} imageIndex={selectedValue} images={images} image360={image360} cloudImages={cloudImages} errorAlert={setOpenErrorAlert} />
               </TabPanel>
               <TabPanel value="fr">
-              <Form onSubmit={handleSubmit(onFormSubmit, onFormError)}>
-                <Input name="title" type="text" label={t("blog.create.title")} {...register("title", { required: "Required"})} required error={!! errors.title} helpertext={errors?.title?.message}></Input>
-                <Input name="metaDescription" type="text" label={t("blog.create.metaDescription")} {...register("metaDescription", { required: "Required"})} required error={!! errors.metaDescription} helpertext={errors?.metaDescription?.message}></Input>
-                <Input name="metaKeywords" type="text" label={t("blog.create.metaKeywords")} {...register("metaKeywords", { required: "Required"})} required error={!! errors.metaKeywords} helpertext={errors?.metaKeywords?.message}></Input>
-                <Input name="shortText" type="text" label={t("blog.create.shortText")} {...register("shortText", { required: "Required"})} required error={!! errors.shortText} helpertext={errors?.shortText?.message}></Input>
-                <InputMultiline name="blogText" type="text" label={t("blog.create.blogText")} {...register("blogText", { required: "Required"})} required error={!! errors.blogText} helpertext={errors?.blogText?.message}></InputMultiline>
-                <SubmitButton>Send</SubmitButton>
-              </Form>
+                <PostsForm post={posts} lan={value} imageIndex={selectedValue} images={images} image360={image360} cloudImages={cloudImages} errorAlert={setOpenErrorAlert} />
               </TabPanel>
             </TabContext>
           </div>

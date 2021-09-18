@@ -27,7 +27,7 @@ i18n
   .use(initReactI18next) // bind react-i18next to the instance
   .init({
     fallbackLng: 'en',
-    debug: true,
+    debug: false,
     resources,
     detection: {
       order: ['queryString','cookie'],
