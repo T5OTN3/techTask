@@ -1,8 +1,13 @@
 
     import prisma from './../../../../lib/prisma';
     import nextConnect from 'next-connect';
-    import APIFeatures from '../../../../utils/apiFeatures';
     
+    const convertObjType = (obj) => {
+        for (const [key, value] of Object.entries(obj)) {
+            if(value === 'false' || value === 'true') obj[key] = String(value) == "true";
+            if(value * 1) obj[key] = Number(value);
+        }
+    }
     
     const apiRoute = nextConnect({
       onError(error, req, res) {
@@ -23,6 +28,7 @@
         const queryObj = {...req.query};
         const excludedFields = ['searchString','page','limit','orderBy','orderType','fields'];
         excludedFields.forEach(el => delete queryObj[el]);
+        convertObjType(queryObj);
 
         // Filters posts by title or shortText or metaDescription or metaKeywords
         const or = searchString
