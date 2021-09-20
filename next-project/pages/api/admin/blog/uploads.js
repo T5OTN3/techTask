@@ -40,7 +40,7 @@ apiRoute.post( async (req, res) => {
 
     const imageArr = req.files.map((el, index) => {
         const type = index === obj.imageIndex ? 'primary' : 'secondary';
-        const image360 = index === obj.imageIndex ? obj.image360 : false;
+        const image360 = index === obj.image360Index ? true : false;
         return { imageName: el.filename, folderName: req.imagePath, type, image360 }
     });
 
@@ -58,7 +58,10 @@ apiRoute.post( async (req, res) => {
         }
     });
 
-    res.status(200).json({ data: 'success' });
+    res.status(200).json({ 
+        status: 'success',
+        data: newBlog 
+    });
 });
 
 export const config = {

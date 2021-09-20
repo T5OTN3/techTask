@@ -53,9 +53,14 @@ const schema = yup.object().shape({
 export default function Home() {
   //RadioButton to make Primary image
   const [selectedValue, setSelectedValue] = useState(0);
+  const [image360, setimage360] = useState(0);
+  const [isImage360, setIsImage360] = useState(false);
 
   const radioHandleChange = (event) => {
     setSelectedValue(+event.target.value);
+  };
+  const radio360HandleChange = (event) => {
+    setimage360(+event.target.value);
   };
   //Translation
   const { t, i18n } =useTranslation();
@@ -68,7 +73,6 @@ export default function Home() {
   const [openErrorAlert, setOpenErrorAlert] = useState(false);
   const [images, setImages] = useState([]);
   const [preview, setPreview] = useState([]);
-  const [image360, setimage360] = useState(false);
   //Tab controll
   const classes = useStyles();
   const [value, setValue] = useState('en');
@@ -89,7 +93,7 @@ export default function Home() {
       setOpenErrorAlert(true)
       return
     }
-    const obj = {...data, lan: value, imageIndex: selectedValue, image360 }
+    const obj = {...data, lan: value, imageIndex: selectedValue, image360Index: isImage360 ? image360 : -1 }
     const formData = new FormData();
     formData.append('data', JSON.stringify(obj));
     for(let i = 0; i < images.length; i++){
@@ -102,7 +106,7 @@ export default function Home() {
     reset();
     setImages([]);
     setTimeout(() => {
-      router.push(`/edit/${response.data.id}`);
+      router.push(`/blogs/edit/${response.data.data.id}`);
     }, 2000);
   }
 
@@ -166,9 +170,9 @@ export default function Home() {
         />
         </label>
         <FormControlLabel
-          control={<Checkbox checked={image360} onChange={() => setimage360(!image360)} name="panorama" />}
-          label="Check if primary image is panorama"
-        />
+          control={<Checkbox checked={isImage360} onChange={() => setIsImage360(!isImage360)} name="panorama" />}
+          label="check if you have 360 type image"
+        />  
       </div>
       </form>
       <div className="flex flex-wrap py-5 mt-5 border-dotted border-4 border-light-blue-500">
@@ -182,7 +186,7 @@ export default function Home() {
                     <span>×</span>
                   </button>
                   <img className="object-contain h-20 w-full" src={file}  alt={file.name}/>
-                  <div className="absolute left-0 -bottom-6">
+                  <div className="">
                   <FormControlLabel control={
                     <Radio
                         checked={selectedValue === key}
@@ -192,7 +196,17 @@ export default function Home() {
                         name="imagePrimary"
                         size="small"
                       />
-                    } label="primary" />          
+                    } label="primary" />
+                    {isImage360 && (<FormControlLabel control={
+                      <Radio
+                        checked={image360 === key}
+                        color='primary'
+                        onChange={radio360HandleChange}
+                        value={key}
+                        name="image360"
+                        size="small"
+                      />
+                      } label="360" /> )}     
                   </div>
               </div>   
           )

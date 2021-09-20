@@ -1,7 +1,6 @@
 
     import prisma from './../../../../lib/prisma';
     import nextConnect from 'next-connect';
-    import APIFeatures from '../../../../utils/apiFeatures';
     
     
     const apiRoute = nextConnect({
@@ -16,27 +15,7 @@
     
     
     apiRoute.get( async (req, res) => {
-        const { searchString, page: queryPage, limit: queryLimit, orderBy: queryOrderBy, orderType: queryOrderType } = req.query
-
-        const page = queryPage * 1 || 1;
-        const limit = queryLimit * 1 || 100;
-        const skip = (page - 1) * limit;
-
-        const paginate = page
-          ? {
-                take: Number(limit) || undefined,
-                skip: Number(skip) || undefined,
-            }
-          : {}
-
-        const orderByField = queryOrderBy || "blogId";
-        const orderType = queryOrderType || "asc";
-
-        const order = {
-            orderBy: {
-                [orderByField]: orderType || undefined,
-              }
-        }
+        const { searchString } = req.query
 
         const blogs = await prisma.blogs.findMany({
             where:{
