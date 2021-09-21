@@ -26,7 +26,7 @@ const schema = yup.object().shape({
     blogText: yup.string().min(10).max(1500).checkMessage("Allowed only plain text").required("Message is a required field"),
 });
 
-const PostsForm = ({ post, lan, imageIndex, images, image360, cloudImages, errorAlert }) => {
+const PostsForm = ({ post, lan, imageIndex, images, image360Index, cloudImages, errorAlert }) => {
     const router = useRouter();
 
     //Translation
@@ -43,7 +43,7 @@ const PostsForm = ({ post, lan, imageIndex, images, image360, cloudImages, error
         errorAlert(true)
         return
       }
-      const obj = {...data, lan, imageIndex, image360, cloudImages, images }
+      const obj = {...data, lan, imageIndex, image360Index, cloudImages, images }
       const formData = new FormData();
       formData.append('data', JSON.stringify(obj));
       for(let i = 0; i < images.length; i++){
@@ -51,7 +51,7 @@ const PostsForm = ({ post, lan, imageIndex, images, image360, cloudImages, error
       };
     
       //const response = await axios.post('/api/admin/blog/uploads', formData);
-      console.log(obj);
+
       //setOpenSuccessAlert(true);
     }
 
