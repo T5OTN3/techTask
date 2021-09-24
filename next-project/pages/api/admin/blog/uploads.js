@@ -17,6 +17,20 @@ const storage = new Storage({
 
 const bucket = storage.bucket('secretimmo-static-bucket');
 
+/* async function configureBucketCors() {
+    await storage.bucket(bucketName).setCorsConfiguration([
+      {
+        maxAgeSeconds,
+        method: ['http://localhost:3000/'],
+        origin: ['GET'],
+        responseHeader: ['Content-Type'],
+      },
+    ]);
+
+    console.log(`Bucket ${bucketName} was updated with a CORS config
+        to allow ${method} requests from ${origin} sharing 
+        ${responseHeader} responses across origins`);
+} */
 
 const uploadImage = (file) => new Promise((resolve, reject) => {
     const { buffer } = file;
@@ -86,6 +100,8 @@ apiRoute.post( async (req, res) => {
     const obj = JSON.parse(data);
 
     const imageCloud = [];
+
+    //configureBucketCors().catch(console.error);
 
     await Promise.all(
         req.files.map(async file => {

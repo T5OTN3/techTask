@@ -23,7 +23,7 @@ export default function BlogCard({ id, title, shortText, date, image }){
                 height="150px"
                 id={`${id}`}
                 sceneId="firstScene"
-                imageSource={`https://storage.googleapis.com/secretimmo-static-bucket/${image?.imageName}`}
+                imageSource={`/cloud/images/${image?.imageName}`}
                 config={config}
                 style={{
                   width: "100%",
@@ -33,7 +33,7 @@ export default function BlogCard({ id, title, shortText, date, image }){
             </div>
           ):(
             <img
-              src={`https://storage.googleapis.com/secretimmo-static-bucket/${image?.imageName}`}
+              src={`/cloud/images/${image?.imageName}`}
               alt="Blog Cover"
               className="object-fill w-full rounded-lg rounded-b-none md:h-56"
             />
