@@ -89,7 +89,7 @@ export default function BlogCard({id, title, blogText, date, images }) {
         <ReactPannellum
           id={`${id}`}
           sceneId={`${id}`}
-          imageSource={`/Blogs/${el?.folderName}/${el?.imageName}`}
+          imageSource={`https://storage.googleapis.com/secretimmo-static-bucket/${el?.imageName}`}
           config={config}
           style={{
             width: "100%",
@@ -101,7 +101,7 @@ export default function BlogCard({id, title, blogText, date, images }) {
       ):(
         <div key={id}>
           <img
-            src={`/Blogs/${el?.folderName}/${el?.imageName}`}
+            src={`https://storage.googleapis.com/secretimmo-static-bucket/${el?.imageName}`}
             alt="Blog Cover"
             className="object-fill h-full w-auto rounded-lg rounded-b-none md:h-56"
           />

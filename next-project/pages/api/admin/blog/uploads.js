@@ -2,18 +2,54 @@ import prisma from './../../../../lib/prisma';
 import nextConnect from 'next-connect';
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
-import fs from 'fs';
+// Imports the Google Cloud client library
+import { Storage } from '@google-cloud/storage';
+
+const credential = JSON.parse(
+    Buffer.from(process.env.GCLOUD_CREDENTIALS, 'base64').toString()
+);
+
+// Creates a client from a Google service account key
+const storage = new Storage({ 
+    projectId: 'secretimmo',
+    credentials: credential 
+});
+
+const bucket = storage.bucket('secretimmo-static-bucket');
+
+
+const uploadImage = (file) => new Promise((resolve, reject) => {
+    const { buffer } = file;
+  
+    const ext = file.originalname.split('.')[1];
+    const fileName = `${uuidv4()}.${ext}`;
+    const blob = bucket.file(fileName);
+    const blobStream = blob.createWriteStream({
+      resumable: false
+    })
+    blobStream.on('finish', () => {
+      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+      resolve({ publicUrl, fileName });
+    })
+    .on('error', () => {
+      reject(`Unable to upload image, something went wrong`)
+    })
+    .end(buffer)
+});
+
+const multerStorage = multer.memoryStorage();
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) {
+    cb(null, true);
+  } else {
+    cb("Please upload only images.", false);
+  }
+};
 
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, `./public/Blogs/${req.imagePath}`);
-    },
-    filename: (req, file, cb) => {
-        const ext = file.mimetype.split('/')[1];
-        cb(null, `${uuidv4()}.${ext}`);
-    },
-  }),
+  storage: multerStorage,
+  fileFilter: multerFilter
 });
 
 const apiRoute = nextConnect({
@@ -26,24 +62,44 @@ const apiRoute = nextConnect({
   },
 });
 
+apiRoute.use(upload.array("images", 10)); // limit to 10 images
+/* 
 apiRoute.use((req, res, next) => {
-    req.imagePath = uuidv4();
-    fs.mkdirSync(`./public/Blogs/${req.imagePath}`);
-    next();
-});
-
-apiRoute.use(upload.array('images', 10));
+    uploadFiles(req, res, err => {
+      if (err instanceof multer.MulterError) { // A Multer error occurred when uploading.
+        if (err.code === "LIMIT_UNEXPECTED_FILE") { // Too many images exceeding the allowed limit
+          console.log("Error - to many images")
+        }
+      } else if (err) {
+        // handle other errors
+        console.log(err)
+      }
+      
+      // Everything is ok.
+      console.log("ok")
+      next();
+    });
+  }); */
 
 apiRoute.post( async (req, res) => {
     const { data } = req.body;
     const obj = JSON.parse(data);
 
-    const imageArr = req.files.map((el, index) => {
+    const imageCloud = [];
+
+    await Promise.all(
+        req.files.map(async file => {
+            const imageUrl = await uploadImage(file);
+            imageCloud.push(imageUrl);
+        })
+    );
+
+    const imageArr = imageCloud.map((el, index) => {
         const type = index === obj.imageIndex ? 'primary' : 'secondary';
         const image360 = index === obj.image360Index ? true : false;
-        return { imageName: el.filename, folderName: req.imagePath, type, image360 }
+        return { imageName: el.fileName, folderName: el.publicUrl, type, image360 }
     });
-
+      
     const newBlog = await prisma.blogs.create({
         data: {
             posts: { create: [{
@@ -60,7 +116,7 @@ apiRoute.post( async (req, res) => {
 
     res.status(200).json({ 
         status: 'success',
-        data: newBlog 
+        //data: newBlog 
     });
 });
 
