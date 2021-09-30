@@ -8,7 +8,7 @@ export default async function handler(req, res){
 
         const code = Math.random().toString().substr(2, 6);
 
-        const smsRespone = await axios(`https://api.budgetsms.net/sendsms/?username=meta&handle=4afdd7e78440a1b6fdd326d1144538a7&userid=9117&msg=${code}&from=BudgetSMS&to=995${phone}`);
+        const smsRespone = await axios(`https://api.budgetsms.net/sendsms/?username=meta&handle=&userid=9117&msg=${code}&from=BudgetSMS&to=995${phone}`);
         
         const contactInfo = await prisma.contact.update({
             select:{ firstName: true, id: true, phone: true },
